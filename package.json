@@ -1,0 +1,13 @@
+{
+  "name": "connect4",
+  "version": "1.0.0",
+  "scripts": {
+    "build:css": "tailwindcss build static/tailwind.css -o static/style.css"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.40",
+    "postcss-cli": "^11.0.0",
+    "tailwindcss": "^2.2.19"
+  }
+}

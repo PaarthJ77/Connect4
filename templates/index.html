@@ -3,17 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <title>Connect 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .board {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            max-width: 350px;
+            margin: 0 auto;
+            background-color: #0000FF; /* Board background color */
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .disk {
+            position: absolute;
+            top: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            transition: top 0.5s ease;
+        }
+        .player1 {
+            background-color: red;
+        }
+        .player2 {
+            background-color: yellow;
+        }
+    </style>
 </head>
-<body class="bg-gray-800 text-white">
-    <div class="container mx-auto text-center py-20">
-        <h1 class="text-4xl mb-8">Connect 4 Game</h1>
-        <form action="/new_game" method="POST">
-            <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                Start New Game
-            </button>
-        </form>
+<body class="bg-gray-100">
+    <div class="container mx-auto py-8">
+        <h1 class="text-4xl text-center font-bold mb-8">Connect 4</h1>
+        <div class="board">
+            {% for row in range(ROWS) %}
+                {% for col in range(COLS) %}
+                    <div class="cell" data-row="{{ row }}" data-col="{{ col }}"></div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <p id="status" class="text-center mt-4"></p>
     </div>
+
+    <script>
+        let currentPlayer = 'player1'; // Start with player 1
+        const board = document.querySelector('.board');
+        const status = document.getElementById('status');
+
+        // Initialize the board with empty cells
+        const boardState = [];
+        for (let row = 0; row < 6; row++) {
+            boardState[row] = [];
+            for (let col = 0; col < 7; col++) {
+                boardState[row][col] = null;
+            }
+        }
+
+        board.addEventListener('click', function(e) {
+            const cell = e.target.closest('.cell');
+            if (!cell) return; // If the click is not on a cell, ignore it
+
+            const col = parseInt(cell.getAttribute('data-col'));
+            let row = 5;
+
+            // Find the next available spot in the column
+            while (row >= 0 && boardState[row][col] !== null) {
+                row--;
+            }
+
+            if (row >= 0) {
+                // Update the board state
+                boardState[row][col] = currentPlayer;
+
+                // Create the disk element and append it to the clicked cell
+                const disk = document.createElement('div');
+                disk.className = `disk ${currentPlayer}`;
+                board.children[row * 7 + col].appendChild(disk);
+
+                // Animate the disk drop
+                disk.style.top = '-50px';
+                setTimeout(() => {
+                    disk.style.top = '0';
+                }, 10);
+
+                // Check for win or draw here (add your logic)
+
+                // Switch player
+                currentPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
+                status.textContent = `Current Player: ${currentPlayer === 'player1' ? 'Player 1' : 'Player 2'}`;
+            }
+        });
+
+        // Initialize the status message
+        status.textContent = 'Current Player: Player 1';
+    </script>
 </body>
 </html>
