@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <title>Connect 4</title>
+</head>
+<body class="bg-gray-800 text-white">
+    <div class="container mx-auto text-center py-20">
+        <h1 class="text-4xl mb-8">Connect 4 Game</h1>
+        <div class="grid grid-cols-7 gap-4">
+            {% for row in board %}
+                {% for cell in row %}
+                    <div class="w-16 h-16 border border-gray-700 flex items-center justify-center text-2xl">
+                        {{ cell }}
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+        <div class="mt-8">
+            {% if not game_won %}
+                <p>Player {{ player }}'s turn</p>
+                <div class="flex justify-center space-x-4 mt-4">
+                    {% for col in range(7) %}
+                        <form action="{{ url_for('make_move_route', col=col) }}" method="POST">
+                            <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                                Drop in {{ col + 1 }}
+                            </button>
+                        </form>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Game Over! {{ 'Player ' + player + ' wins!' if player != 'D' else 'It\'s a draw!' }}</p>
+                <form action="/new_game" method="POST">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-4">
+                        Start New Game
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
