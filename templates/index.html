@@ -68,6 +68,58 @@
             }
         }
 
+        function checkWin(player) {
+            // Check horizontal win
+            for (let row = 0; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (boardState[row][col] === player &&
+                        boardState[row][col + 1] === player &&
+                        boardState[row][col + 2] === player &&
+                        boardState[row][col + 3] === player) {
+                        return true;
+                    }
+                }
+            }
+
+            // Check vertical win
+            for (let col = 0; col < 7; col++) {
+                for (let row = 0; row < 3; row++) {
+                    if (boardState[row][col] === player &&
+                        boardState[row + 1][col] === player &&
+                        boardState[row + 2][col] === player &&
+                        boardState[row + 3][col] === player) {
+                        return true;
+                    }
+                }
+            }
+
+            // Check diagonal (bottom-left to top-right)
+            for (let row = 3; row < 6; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (boardState[row][col] === player &&
+                        boardState[row - 1][col + 1] === player &&
+                        boardState[row - 2][col + 2] === player &&
+                        boardState[row - 3][col + 3] === player) {
+                        return true;
+                    }
+                }
+            }
+
+            // Check diagonal (top-left to bottom-right)
+            for (let row = 0; row < 3; row++) {
+                for (let col = 0; col < 4; col++) {
+                    if (boardState[row][col] === player &&
+                        boardState[row + 1][col + 1] === player &&
+                        boardState[row + 2][col + 2] === player &&
+                        boardState[row + 3][col + 3] === player) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         board.addEventListener('click', function(e) {
             const cell = e.target.closest('.cell');
             if (!cell) return; // If the click is not on a cell, ignore it
@@ -95,7 +147,18 @@
                     disk.style.top = '0';
                 }, 10);
 
-                // Check for win or draw here (add your logic)
+                // Check if the current player has won
+                if (checkWin(currentPlayer)) {
+                    status.textContent = `Player ${currentPlayer === 'player1' ? '1' : '2'} wins!`;
+                    board.removeEventListener('click', arguments.callee); // Stop further moves
+                    return;
+                }
+
+                // Check for a draw
+                if (boardState.flat().every(cell => cell !== null)) {
+                    status.textContent = 'The game is a draw!';
+                    return;
+                }
 
                 // Switch player
                 currentPlayer = currentPlayer === 'player1' ? 'player2' : 'player1';
